@@ -160,7 +160,7 @@ def match_eeg_files_to_subjects(
     eeg_file_column: str = None
 ) -> Dict[str, Any]:
     """
-    根据重排序的EEG文件名列表，在subject信息表中匹配对应的age、gender、tau_status和Abeta_status信息
+根据重排序的EEG文件名列表，在subject信息表中匹配对应的age、gender、education、tau_status和Abeta_status信息
     
     参数:
         eeg_file_list_path: 包含重排序EEG文件名的文件路径（支持Excel和CSV）
@@ -746,7 +746,7 @@ def run_lme_analysis(age, gender, tau_status, suvr_values, features_dict, output
             # 1. 创建公式 - 包含随机截距（每个被试）
             formula = f"{feat_col} ~ Abeta_SUVR * Tau_status + Age + C(Gender)"
             
-            # 2. 使用混合效应模型（而非普通OLS）
+            # 2. 使用混合效应模型
             model = smf.mixedlm(formula, roi_df, groups=roi_df['SubjectID'])
             
             # 3. 尝试多种优化方法（解决可能的收敛问题）
@@ -854,12 +854,12 @@ def run_lme_analysis(age, gender, tau_status, suvr_values, features_dict, output
 
         overall_stats = compute_overall_stats(roi_results, tau_status)
         
-        # 新增ROI回归线可视化
-        #plot_combined_roi_regression(df, roi_results, overall_stats, output_dir)
+        # ROI回归线可视化
+        plot_combined_roi_regression(df, roi_results, overall_stats, output_dir)
 
-        #plot_abeta_main_effect(df, roi_results, overall_stats, output_dir)
+        plot_abeta_main_effect(df, roi_results, overall_stats, output_dir)
 
-        # plot_tau_main_effect(df, roi_results, output_dir)
+        plot_tau_main_effect(df, roi_results, output_dir)
         
     
     return roi_results
